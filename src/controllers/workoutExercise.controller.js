@@ -74,6 +74,32 @@ const workoutExerciseController = {
 
     const deletedWorkoutExercise = req.workoutExercises.splice(index, 1);
     res.status(200).json({ deleted: deletedWorkoutExercise[0].id });
+  },
+
+  // PATCH /workoutexercise/:id
+  patchWorkoutExercise: (req, res) => {
+    const { id } = req.params;
+    const { series, repeticiones_por_serie, peso_kg } = req.body;
+
+    if (!req.body) {
+      return res.status(400).json({ error: 'Body vacío o no enviado como JSON' });
+    }
+
+    const index = req.workoutExercises.findIndex(we => we.id === parseInt(id));
+    if (index === -1) {
+      return res.status(404).json({ error: 'Serie no encontrada' });
+    }
+
+    const updatedWorkoutExercise = {
+      ...req.workoutExercises[index],
+      ...(series !== undefined && { series }),
+      ...(repeticiones_por_serie !== undefined && { repeticiones_por_serie }),
+      ...(peso_kg !== undefined && { peso_kg })
+    };
+
+    req.workoutExercises[index] = updatedWorkoutExercise;
+
+    res.status(200).json(updatedWorkoutExercise);
   }
 };
 
